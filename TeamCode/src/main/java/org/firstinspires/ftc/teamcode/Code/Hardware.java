@@ -1,15 +1,18 @@
 package org.firstinspires.ftc.teamcode.Code;
 
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Hardware {
-    DcMotor backLeft, backRight, frontLeft, frontRight, intakeMotor, crabMotor;
+    DcMotor backLeft, backRight, frontLeft, frontRight;
+    DcMotor crabMotor;
+    Servo crabServo, lockServo;
+    DcMotor shootyThingy;
+    Servo pinBall;
+    DcMotor pushthing;
+    Servo something;
     HardwareMap hwMap = null;
-    CRServo slideFLeft, slideFRight, slideBLeft, slideBRight;
-    public Servo crab;
 
     public Hardware()
     {
@@ -25,24 +28,18 @@ public class Hardware {
         frontLeft  = hwMap.get(DcMotor.class, "frontLeft");
         frontRight = hwMap.get(DcMotor.class, "frontRight");
         crabMotor = hwMap.get(DcMotor.class, "crabMotor");
+        crabServo = hwMap.get(Servo.class, "crabServo");
+        lockServo = hwMap.get(Servo.class, "lockServo");
+        shootyThingy = hwMap.get(DcMotor.class, "shoot");
+        pinBall = hwMap.get(Servo.class, "pinBall");
 
-        //Define and initialize servos
 
 
-        //Set all motors to zero power.
         backLeft.setPower(0);
         backRight.setPower(0);
         frontLeft.setPower(0);
         frontRight.setPower(0);
-        crabMotor.setPower(0);
-
-        //Allows for motors to run without encoders, except for the front left motor.
-        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        crabMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
+        shootyThingy.setPower(0);
 
     }
 
