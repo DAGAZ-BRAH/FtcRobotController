@@ -13,12 +13,17 @@ public class TeleOpThing extends LinearOpMode {
         double turn;
         double strafe;
         double crabRotate;
+        boolean pinch = false; //false = crab claw is opened, true is equal to closed.
+        boolean open; //boolean for checking if claw open button was pushed.
+        boolean close; //boolean for checking if claw closed button was pushed.
         double fLeft;
         double fRight;
         double bLeft;
         double bRight;
         double max;
-        boolean crabPos = true;
+        boolean spinny; //spin factor for the motor on the shoot thing
+        boolean noSpinny;
+        boolean pinBall;
         int cooldown = 0;
 
         robot.innit(hardwareMap);
@@ -34,6 +39,11 @@ public class TeleOpThing extends LinearOpMode {
             turn = gamepad1.left_stick_x;
             strafe = gamepad1.right_stick_x;
             crabRotate = (-1 * gamepad1.left_trigger) + gamepad1.right_trigger;
+            open = gamepad1.x;
+            close = gamepad1.b;
+            spinny = gamepad1.right_bumper;
+            noSpinny = gamepad1.left_bumper;
+            pinBall = gamepad1.dpad_up;
 
             //Different combinations of motor powers make the robot move in different ways
             //To go forwards, the two left wheels spin counterclockwise while the right wheels spin clockwise
@@ -44,58 +54,56 @@ public class TeleOpThing extends LinearOpMode {
             bLeft = -drive - turn + strafe;
             bRight = drive - turn - strafe;
 
-            if (cooldown != 0) cooldown--; //Decrement the cooldown on the crab
-            if (gamepad1.x && cooldown == 0) {
-                if (crabPos) {
-                    //Close claw
-                    robot.crab.setPosition(0);
-                    cooldown = 25; //Cooldown is half a second (25 x 20 ms)
-                    crabPos = false;
-                } else {
-                    //Open claw
-                    robot.crab.setPosition(90);
-                    cooldown = 25; //Cooldown is half a second (25 x 20 ms)
-                    crabPos = true;
-                }
-            }
-
-            //Moving claw
-            if (gamepad1.dpad_up) {
-
-                robot.slideFLeft.setPower(1);
-                robot.slideFRight.setPower(-1);
-                robot.slideBLeft.setPower(1);
-                robot.slideBRight.setPower(-1);
-
-            } else if (gamepad1.dpad_down) {
-
-                robot.slideFLeft.setPower(-1);
-                robot.slideFRight.setPower(1);
-                robot.slideBLeft.setPower(-1);
-                robot.slideBRight.setPower(1);
-
-                max = Math.max(Math.max(Math.abs(fLeft), Math.abs(fRight)), Math.max(Math.abs(bLeft), Math.abs(bRight)));
-                if (max > 1.0) {
-                    fLeft /= max;
-                    fRight /= max;
-                    bLeft /= max;
-                    bRight /= max;
-                    //brah moment
-
-                }
-
-                robot.frontLeft.setPower(fLeft);
-                robot.frontRight.setPower(fRight);
-                robot.backLeft.setPower(bLeft);
-                robot.backRight.setPower(bRight);
-                robot.crabMotor.setPower(crabRotate);
-
-                telemetry.update();
-
-                // Pause for 20 mS each cycle = update 50 times a second.
-                sleep(20);
+            max = Math.max(Math.max(Math.abs(fLeft), Math.abs(fRight)), Math.max(Math.abs(bLeft), Math.abs(bRight)));
+            if (max > 1.0) {
+                fLeft /= max;
+                fRight /= max;
+                bLeft /= max;
+                bRight /= max;
+                //brah moment
 
             }
+
+            if(spinny)
+            {
+                robot.shootyThingy.setPower(1);
+                noSpinny = false;
+            }
+            else if(noSpinny)
+            {
+                robot.shootyThingy.setPower(0);
+                spinny = false;
+            }
+            if(open)
+            {
+                robot.lockServo.setPosition(90);
+                robot.crabServo.setPosition(90);
+                close = false;
+            }
+            if(close)
+            {
+                robot.crabServo.setPosition(0);
+                robot.lockServo.setPosition(0);
+                open = false;
+            }
+            if(pinBall)
+            {
+                robot.pinBall.setPosition(90);
+                pinBall = false;
+            }
+            robot.pinBall.setPosition(0);
+            robot.frontLeft.setPower(fLeft);
+            robot.frontRight.setPower(fRight);
+            robot.backLeft.setPower(bLeft);
+            robot.backRight.setPower(bRight);
+            robot.crabMotor.setPower(crabRotate);
+
+
+            telemetry.update();
+
+            // Pause for 20 mS each cycle = update 50 times a second.
+            sleep(20);
+
         }
     }
 }
